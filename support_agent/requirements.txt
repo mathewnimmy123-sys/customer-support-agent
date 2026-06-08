@@ -1,0 +1,5 @@
+google-adk[agent-identity,a2a]==2.0.0
+google-auth>=2.0.0
+mcp>=1.0.0
+google-adk
+google-cloud-bigquery

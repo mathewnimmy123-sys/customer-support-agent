@@ -1,0 +1,10 @@
+# agent.yaml
+name: customer_support_agent_demo
+version: 1.0.0
+entry_point: support_agent.agent:root_agent
+region: us-central1
+project: gci-techss-gcp-pjnp-01nl165115
+runtime:
+  env_variables:
+    GOOGLE_GENAI_USE_VERTEXAI: "TRUE"
+    GOOGLE_CLOUD_PROJECT: "gci-techss-gcp-pjnp-01nl165115"

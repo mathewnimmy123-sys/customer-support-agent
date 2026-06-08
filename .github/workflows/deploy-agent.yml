@@ -1,0 +1,38 @@
+name: Deploy Support Agent to Vertex AI
+
+on:
+  push:
+    branches:
+      - main # Triggers the deployment automatically whenever you merge to main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Clone the code from the GitHub repository into the runner
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # 2. Set up a secure, stable Python version (Bypasses local workstation mismatch!)
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    # 3. Install the pre-resolved production dependencies
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    # 4. Authenticate safely with Google Cloud using a secure Workload Identity Provider
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+    # 5. Execute the clean Python deployment script straight to the cloud
+    - name: Deploy to Agent Engine
+      run: |
+        python deploy.py
