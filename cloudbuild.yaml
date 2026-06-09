@@ -1,5 +1,5 @@
 steps:
-  # Step 1: Initialize Python inside a clean container
+  # Step 1: Initialize Python and map directory files
   - name: 'python:3.11-slim'
     id: 'Install Dependencies and Execute Cloud Deploy'
     entrypoint: 'bash'
@@ -10,6 +10,12 @@ steps:
         python -m venv venv
         source venv/bin/activate
         
+        echo "📂 --- DEBUGGING: PRINTING ROOT FOLDER CONTENTS ---"
+        ls -la
+        
+        echo "📂 --- DEBUGGING: PRINTING SUBAGENT FOLDER CONTENTS ---"
+        ls -la support_agent/
+        
         echo "📦 Upgrading base installer utilities..."
         python -m pip install --upgrade pip setuptools wheel
         
@@ -17,8 +23,8 @@ steps:
         pip install google-cloud-aiplatform>=1.47.0 vertexai
         
         echo "🚀 Triggering production agent deployment sequence..."
-        # ── FIXED: Point directly to the script inside the subfolder ──
-        python support_agent/deploy_agent_engine.py
+        # This will attempt the root run. If it fails, the 'ls' logs above will tell us the exact filename!
+        python deploy_agent_engine.py
 
 timeout: '1200s'
 options:
