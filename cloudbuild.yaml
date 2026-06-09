@@ -11,13 +11,14 @@ steps:
         source venv/bin/activate
         
         echo "📦 Upgrading base installer utilities..."
-        pip install --upgrade pip setuptools wheel
+        python -m pip install --upgrade pip setuptools wheel
         
         echo "📥 Pre-installing required Google Vertex AI platform modules..."
         pip install google-cloud-aiplatform>=1.47.0 vertexai
         
         echo "🚀 Triggering production agent deployment sequence..."
-        python deploy_agent_engine.py
+        # ── FIXED: Point directly to the script inside the subfolder ──
+        python support_agent/deploy_agent_engine.py
 
 timeout: '1200s'
 options:
