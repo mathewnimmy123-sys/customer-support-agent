@@ -1,24 +1,23 @@
 steps:
-  # Step 1: Initialize Python inside a clean container
-  - name: 'python:3.11-slim'
+  # Step 1: Initialize Python 3.12 inside a clean container
+  - name: 'python:3.12-slim'
     id: 'Install Dependencies and Execute Cloud Deploy'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        echo "🔄 Initializing Python build container environment..."
-        python -m venv venv
-        source venv/bin/activate
+        echo "🔄 Initializing Clean Python 3.12 Environment..."
         
+        # We explicitly avoid running 'source venv/bin/activate' here 
+        # to prevent the container from accidentally using your uploaded local 3.11 virtual env.
         echo "📦 Upgrading base installer utilities..."
-        python -m pip install --upgrade pip setuptools wheel
+        python3 -m pip install --upgrade pip setuptools wheel
         
         echo "📥 Pre-installing required Google Vertex AI platform modules..."
-        pip install google-cloud-aiplatform>=1.47.0 vertexai
+        python3 -m pip install google-cloud-aiplatform>=1.47.0 vertexai
         
         echo "🚀 Triggering production agent deployment sequence..."
-        # ── FIXED: Pointing to your actual root script name ──
-        python deploy.py
+        python3 deploy.py
 
 timeout: '1200s'
 options:
