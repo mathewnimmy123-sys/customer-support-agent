@@ -15,7 +15,7 @@ sys.version_info = CompliantMockVersion((3, 13, 0, 'final', 0))
 import os
 import vertexai
 from vertexai.preview import reasoning_engines
-from support_agent.agent import customer_support_agent
+from support_agent.agent import agent
 
 PROJECT_ID = "gci-techss-gcp-pjnp-01nl165115"
 LOCATION = "us-central1"
@@ -27,7 +27,7 @@ vertexai.init(project=PROJECT_ID, location=LOCATION, staging_bucket=STAGING_BUCK
 print("📦 Compiling and staging Customer Support Agent to the Cloud...")
 try:
     remote_agent = reasoning_engines.ReasoningEngine.create(
-        root_agent,
+        agent,  # ── FIXED: Changed from root_agent to agent ──
         requirements=[
             "google-adk",
             "google-genai",
