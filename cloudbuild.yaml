@@ -11,8 +11,10 @@ steps:
         echo "📦 Upgrading base installer utilities..."
         python3 -m pip install --upgrade pip setuptools wheel
         
+        echo "🔒 Pinning Python 3.12 compatible networking stack..."
+        python3 -m pip install "aiohttp<3.11.0" "typing_extensions>=4.11.0"
+        
         echo "📥 Installing Vertex AI Agent Engines suite and forcing stable packaging..."
-        # Added cloudpickle and the [agent_engines] flag to resolve code serialization requirements
         python3 -m pip install packaging==24.0 cloudpickle google-cloud-aiplatform[agent_engines]>=1.47.0 vertexai --upgrade-strategy only-if-needed
 
         echo "🚀 Triggering production agent deployment sequence..."
