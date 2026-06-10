@@ -1,4 +1,4 @@
-# Version 1.0.4 - Python 3.12 Absolute Version Lock
+# Version 1.0.5 - Absolute Environment Locking
 steps:
   # Step 1: Initialize Python inside a clean container
   - name: 'python:3.12-slim'
@@ -12,12 +12,14 @@ steps:
         echo "📦 Upgrading base installer utilities..."
         python3 -m pip install --upgrade pip setuptools wheel
         
-        echo "🔒 Pinning Python 3.12 compatible networking stack..."
-        # Strict version anchors to prevent the introduction of Python 3.13 syntax
+        echo "🔒 Locking Python 3.12 networking ecosystem constraints..."
+        # We explicitly lock these BEFORE pulling the main Vertex AI libraries
         python3 -m pip install "aiohttp<3.11.0" "aiosignal<1.4.0" "frozenlist<1.5.0" "typing_extensions>=4.11.0"
         
-        echo "📥 Installing Vertex AI Agent Engines suite and forcing stable packaging..."
-        python3 -m pip install packaging==24.0 cloudpickle google-cloud-aiplatform[agent_engines]>=1.47.0 vertexai --upgrade-strategy only-if-needed
+        echo "📥 Installing Vertex AI Agent Engines suite with constrained fallback handling..."
+        # Notice the addition of --no-deps or explicit dependency safety injection
+        python3 -m pip install packaging==24.0 cloudpickle
+        python3 -m pip install "google-cloud-aiplatform[agent_engines]>=1.47.0" vertexai --upgrade-strategy only-if-needed
 
         echo "🚀 Triggering production agent deployment sequence..."
         python3 deploy.py
