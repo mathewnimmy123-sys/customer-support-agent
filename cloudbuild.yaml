@@ -11,9 +11,9 @@ steps:
         echo "📦 Upgrading base installer utilities..."
         python3 -m pip install --upgrade pip setuptools wheel
         
-        echo "📥 Installing Vertex AI and forcing stable packaging constraint..."
-        # By putting them in the same line and using --no-deps or a strict constraint, we lock it down completely
-        python3 -m pip install packaging==24.0 google-cloud-aiplatform>=1.47.0 vertexai --upgrade-strategy only-if-needed
+        echo "📥 Installing Vertex AI Agent Engines suite and forcing stable packaging..."
+        # Added cloudpickle and the [agent_engines] flag to resolve code serialization requirements
+        python3 -m pip install packaging==24.0 cloudpickle google-cloud-aiplatform[agent_engines]>=1.47.0 vertexai --upgrade-strategy only-if-needed
 
         echo "🚀 Triggering production agent deployment sequence..."
         python3 deploy.py
