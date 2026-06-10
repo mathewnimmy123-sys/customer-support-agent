@@ -1,4 +1,3 @@
-# support_agent/agent.py
 import os
 import time
 import logging
@@ -34,7 +33,6 @@ def _increment_otel_counter(user_id: str):
         logger.warning(f"Telemetry metric counter bypassed during initialization phase: {e}")
 
 # ── OPENTELEMETRY TRACE & METRICS HOOK IMPLEMENTATIONS ───────────────────
-# Fixed: Removed the raw class type-hint from the signature to prevent import-time NameErrors
 def before_agent_callback(callback_context):
     """Observability Lifecycle Hook: Triggered right before Gemini execution."""
     user_id = 'unknown_user'
@@ -98,7 +96,6 @@ def create_agent_runtime():
     from google.adk.models import Gemini
     from google.genai import types
 
-    # Safe lazy-load OpenTelemetry core tracer elements inside the method block
     try:
         from opentelemetry import trace
         from opentelemetry.trace import Status, StatusCode
@@ -109,7 +106,6 @@ def create_agent_runtime():
     def _build_logic():
         logger.info("🚀 Building active Support Agent Ecosystem...")
         
-        # ── CLOUD COLD-START SHIELD ──
         is_cloud_probe = os.getenv("AIP_HEALTH_ROUTE") is not None or os.getenv("PORT") is not None
         if is_cloud_probe:
             logger.info("⚡ Cloud validation health-probe detected. Instantiating warm placeholder target.")
@@ -120,7 +116,6 @@ def create_agent_runtime():
                 tools=[]
             )
 
-        # Live transaction pathway: Load the supervisor module dynamically
         try:
             from support_agent.supervisor import customer_support_supervisor
             logger.info("Successfully bound custom Multi-Agent Supervisor.")
@@ -215,3 +210,6 @@ class CloudAgentService:
             except Exception as runtime_error:
                 logger.error("Error encountered during request processing loop: %s", str(runtime_error), exc_info=True)
                 return {"content": f"System initializing or processing anomaly: {str(runtime_error)}"}
+
+# ── INSTANTIATE THE TARGET DEPLOYMENT INSTANCE FOR VERTEX REASONING ENGINE ──
+agent = CloudAgentService()

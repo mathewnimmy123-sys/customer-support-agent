@@ -1,4 +1,3 @@
-# deploy.py
 import sys
 
 # ── THE ULTIMATE OVERRIDE: Inherit from standard tuple to allow mathematical comparisons ──
@@ -15,7 +14,7 @@ sys.version_info = CompliantMockVersion((3, 13, 0, 'final', 0))
 import os
 import vertexai
 from vertexai.preview import reasoning_engines
-from support_agent.agent import agent
+from support_agent.agent import agent  # Imports our CloudAgentService instance cleanly
 
 PROJECT_ID = "gci-techss-gcp-pjnp-01nl165115"
 LOCATION = "us-central1"
@@ -27,7 +26,7 @@ vertexai.init(project=PROJECT_ID, location=LOCATION, staging_bucket=STAGING_BUCK
 print("📦 Compiling and staging Customer Support Agent to the Cloud...")
 try:
     remote_agent = reasoning_engines.ReasoningEngine.create(
-        agent,  # ── FIXED: Changed from root_agent to agent ──
+        agent,  # Synchronized matching object reference
         requirements=[
             "google-adk",
             "google-genai",
