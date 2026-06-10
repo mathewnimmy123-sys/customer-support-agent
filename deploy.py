@@ -15,7 +15,7 @@ sys.version_info = CompliantMockVersion((3, 13, 0, 'final', 0))
 import os
 import vertexai
 from vertexai.preview import reasoning_engines
-from support_agent.agent import root_agent
+from support_agent.agent import customer_support_agent
 
 PROJECT_ID = "gci-techss-gcp-pjnp-01nl165115"
 LOCATION = "us-central1"
