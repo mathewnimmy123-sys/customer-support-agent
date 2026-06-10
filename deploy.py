@@ -33,7 +33,12 @@ try:
             "google-cloud-bigquery",
             "pydantic==2.10.0",
             "google-auth",
-            "mcp"
+            "mcp",
+            # Strict overrides to block Python 3.13 syntax inside the Vertex AI runtime instance
+            "aiohttp<3.11.0",
+            "aiosignal<1.4.0",
+            "frozenlist<1.5.0",
+            "typing_extensions>=4.11.0"
         ],
         display_name="customer_support_agent",
         description="Enterprise customer support assistant connected to BigQuery via MCP.",
