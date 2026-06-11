@@ -1,4 +1,4 @@
-# cloudbuild.yaml — v3.0 (Fixed Version Alignment)
+# cloudbuild.yaml — v3.1 (Version Synchronization Fix)
 steps:
   - name: 'python:3.12-slim'
     id: 'deploy-to-agent-engine'
@@ -17,10 +17,10 @@ steps:
         echo "==> Step 3: Pin packaging==24.2 explicitly"
         pip install --no-cache-dir "packaging==24.2"
 
-        echo "==> Step 4: Install Modern Vertex AI SDK with Agent Engines Support"
+        echo "==> Step 4: Install Synchronized Vertex AI SDK with Agent Engines Support"
         pip install --no-cache-dir \
           "google-cloud-aiplatform[agent_engines]==1.157.0" \
-          "vertexai==1.71.1" \
+          "vertexai==1.157.0" \
           --constraint /constraints.txt
 
         echo "==> Step 5: Install project requirements"
