@@ -7,10 +7,18 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(na
 logger = logging.getLogger("customer_support_agent")
 
 # support_agent/agent.py
+# support_agent/agent.py
+
 class SimpleSupportAgent:
     def __init__(self): 
         pass
+        
     def set_up(self): 
         pass
+        
     def query(self, input_data, **kwargs):
-        return {"content": "Active"}
+        user_msg = input_data.get("input", "Hello")
+        return {"content": f"Customer Support Agent Live. Processing input: {user_msg}"}
+
+# Create the instance object that deploy.py imports
+agent = SimpleSupportAgent()
