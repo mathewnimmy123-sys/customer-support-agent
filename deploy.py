@@ -1,4 +1,4 @@
-# deploy.py — v6.4
+# deploy.py — v6.5 (The Class Reference Solution)
 import os
 import sys
 import logging
@@ -14,7 +14,7 @@ PROJECT_ID     = "gci-techss-gcp-pjnp-01nl165115"
 LOCATION       = "us-central1"
 STAGING_BUCKET = "gs://gci-techss-gcp-pjnp-01nl165115-adk-staging"
 
-# Explicit dependencies assigned straight to the remote runtime
+# Clean baseline production requirements
 REQUIREMENTS = [
     "packaging==24.2",
     "google-cloud-aiplatform[agent_engines,reasoningengine]==1.71.1",
@@ -24,20 +24,18 @@ REQUIREMENTS = [
     "google-auth>=2.0.0",
     "aiohttp>=3.10.0,<3.11.0",
     "pydantic>=2.10.0,<3.0.0",
-    "opentelemetry-api>=1.25.0,<2.0.0",
-    "opentelemetry-sdk>=1.25.0,<2.0.0",
-    "opentelemetry-exporter-gcp-trace>=1.5.0,<2.0.0",
 ]
 
 log.info("Initialising Vertex AI project=%s location=%s", PROJECT_ID, LOCATION)
 aiplatform.init(project=PROJECT_ID, location=LOCATION, staging_bucket=STAGING_BUCKET)
 
-log.info("Directly importing initialized agent instance from support_agent layer...")
-from support_agent import agent as live_agent_instance
+log.info("Importing Class Definition from support_agent...")
+# We import the Class definition itself, NOT an instantiated object
+from support_agent.agent import SimpleSupportAgent
 
-log.info("Registering Customer Support Agent object via direct instance mapping...")
+log.info("Registering Customer Support Agent using direct Class structural ingestion...")
 remote = reasoning_engines.ReasoningEngine.create(
-    reasoning_engine=live_agent_instance,
+    reasoning_engine=SimpleSupportAgent,  # Passing the class directly ensures clean server unpacking
     requirements=REQUIREMENTS,
     display_name="customer-support-agent",
     description="Multi-agent customer support with OTel/Cloud Trace and BigQuery MCP.",
