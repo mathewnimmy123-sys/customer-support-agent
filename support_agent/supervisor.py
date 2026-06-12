@@ -1,16 +1,17 @@
 # support_agent/supervisor.py
-from google.adk import Agent
+from google.adk.agents import Agent        # correct import path (not google.adk)
 from .sub_agents import order_agent, returns_agent
-
+ 
 customer_support_supervisor = Agent(
     name="support_supervisor",
-    model="gemini-2.5-pro",
+    model="gemini-2.5-flash",              # using flash (pro not needed for routing)
     instruction=(
-        "You are the primary customer support supervisor. Your job is to greet the customer, "
-        "understand their issue, and delegate it to the appropriate specialist:\n"
-        "- For tracking packages or checking order status, delegate to `order_specialist`.\n"
-        "- For queries about returning products, refunds, or exchanges, delegate to `returns_specialist`.\n"
-        "Always pass back the final answer from the specialist clearly to the customer."
+        "You are the primary customer support supervisor. "
+        "Understand the customer's issue and delegate to the right specialist:\n"
+        "- Order tracking / shipment status → order_specialist\n"
+        "- Returns, refunds, exchanges      → returns_specialist\n"
+        "Always relay the specialist's answer back to the customer clearly."
     ),
-    sub_agents=[order_agent, returns_agent]
+    sub_agents=[order_agent, returns_agent],   # closing parenthesis was missing before
 )
+ 

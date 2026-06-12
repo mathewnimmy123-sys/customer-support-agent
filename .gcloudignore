@@ -1,0 +1,22 @@
+# Ignore Git files
+.git/
+.gitignore
+
+# Ignore local Python artifacts and virtual environments
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+venv/
+.venv/
+env/
+
+# Ignore local execution artifacts
+agent_resource_name.txt
+
+# Ignore common Windows / OS metadata files that cause encoding issues
+Thumbs.db
+Desktop.ini
+*.bak
+*.swp

@@ -1,7 +1,31 @@
-google-adk>=0.1.0
-google-genai>=0.1.0
+# requirements.txt
+# IMPORTANT: packaging must stay at 24.2 — newer versions break google-cloud-aiplatform
+# on Python 3.12 with "cannot import name 'deprecated' from 'warnings'"
+packaging==24.2
+ 
+# ADK
+google-adk[agent-identity,a2a]>=0.5.0
+ 
+# Vertex AI / Agent Engine
+google-cloud-aiplatform[agent_engines]=1.157.0
+vertexai=1.71.1
+ 
+# MCP
+mcp>=1.0.0
+ 
+# BigQuery
 google-cloud-bigquery>=3.0.0
-pydantic>=2.10.0,<2.11.0
+ 
+# OpenTelemetry — full stack for Cloud Trace + metrics
+opentelemetry-api>=1.25.0,<2.0.0
+opentelemetry-sdk>=1.25.0,<2.0.0
+opentelemetry-exporter-gcp-trace>=1.5.0,<2.0.0
+opentelemetry-exporter-gcp-logging>=1.5.0,<2.0.0
+ 
+# Auth / HTTP
 google-auth>=2.0.0
-mcp>=0.1.0
-aiohttp>=3.10.0
+aiohttp>=3.10.0,<3.11.0
+ 
+# Pydantic
+pydantic>=2.10.0,<3.0.0
+ 
