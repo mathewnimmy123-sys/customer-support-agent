@@ -1,23 +1,19 @@
 # cloudbuild.yaml
 steps:
   - name: 'python:3.11-slim'
-    id: 'verify-and-stage-agent'
+    id: 'live-agent-engine-deployment'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
-
-        echo "==> Step 1: Upgrade baseline installer tools"
+        echo "==> Step 1: Upgrading deployment environment dependencies"
         python3 -m pip install -q --no-cache-dir --upgrade pip setuptools wheel
-
-        echo "==> Step 2: Install project framework requirements"
         python3 -m pip install -q --no-cache-dir \
           "packaging==24.2" \
-          "google-cloud-aiplatform[reasoningengine]==1.71.1" \
-          "pydantic>=2.10.0,<3.0.0"
+          "google-cloud-aiplatform[reasoningengine]==1.71.1"
 
-        echo "==> Step 3: Executing Agent Verification Stack"
+        echo "==> Step 2: Running deploy.py to trigger live Vertex resource creation"
         python3 deploy.py
 
 timeout: '1200s'
