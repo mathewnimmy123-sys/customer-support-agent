@@ -1,5 +1,6 @@
-# deploy.py — v6.1
+# deploy.py — v6.3 (Direct Instance Mapping)
 import os
+import sys
 import logging
 from google.cloud import aiplatform
 from vertexai.preview import reasoning_engines
@@ -7,14 +8,16 @@ from vertexai.preview import reasoning_engines
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger(__name__)
 
+# Guarantee local workspace modules are discoverable natively by the interpreter
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 PROJECT_ID     = "gci-techss-gcp-pjnp-01nl165115"
 LOCATION       = "us-central1"
 STAGING_BUCKET = "gs://gci-techss-gcp-pjnp-01nl165115-adk-staging"
 
-# Streamlined requirement block ensuring the engine cluster doesn't throw resolution locks
 REQUIREMENTS = [
     "packaging==24.2",
-    "google-cloud-aiplatform[agent-engines,reasoningengine]==1.71.1",
+    "google-cloud-aiplatform[agent_engines,reasoningengine]==1.71.1",
     "google-adk[agent-identity,a2a]>=0.5.0",
     "mcp>=1.0.0",
     "google-cloud-bigquery>=3.0.0",
@@ -29,9 +32,13 @@ REQUIREMENTS = [
 log.info("Initialising Vertex AI project=%s location=%s", PROJECT_ID, LOCATION)
 aiplatform.init(project=PROJECT_ID, location=LOCATION, staging_bucket=STAGING_BUCKET)
 
-log.info("Registering Customer Support Agent package directory directly...")
+log.info("Directly importing initialized agent instance from support_agent layer...")
+# Fetching the live object reference directly breaks any module path resolution ambiguity
+from support_agent import agent as live_agent_instance
+
+log.info("Registering Customer Support Agent object via direct instance mapping...")
 remote = reasoning_engines.ReasoningEngine.create(
-    reasoning_engine="./support_agent",
+    reasoning_engine=live_agent_instance,
     requirements=REQUIREMENTS,
     display_name="customer-support-agent",
     description="Multi-agent customer support with OTel/Cloud Trace and BigQuery MCP.",
