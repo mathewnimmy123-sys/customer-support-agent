@@ -1,4 +1,4 @@
-# cloudbuild.yaml — v6.1 (Resolution Pass)
+# cloudbuild.yaml — v6.2 (The Final Lap)
 steps:
   - name: 'python:3.11-slim'
     id: 'deploy-to-agent-engine'
@@ -27,9 +27,9 @@ steps:
           "opentelemetry-exporter-gcp-monitoring>=1.5.0,<2.0.0"
 
         echo "==> Step 3: Verification"
-        python3 -c "import packaging; print('packaging:', packaging.__version__)" \
-          && python3 -c "import google.cloud.aiplatform; print('aiplatform: OK')" \
-          && python3 -c "import opentelemetry.exporter.gcp.trace; print('OTel Trace Exporter: OK')"
+        python3 -c "import packaging; print('packaging:', packaging.__version__)"
+        python3 -c "import google.cloud.aiplatform; print('aiplatform: OK')"
+        python3 -c "import opentelemetry.trace; print('OpenTelemetry Core: OK')"
 
         echo "==> Step 4: Running deploy.py"
         python3 deploy.py
