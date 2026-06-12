@@ -1,4 +1,4 @@
-# cloudbuild.yaml — v6.0 (Production-Ready Demo Line)
+# cloudbuild.yaml — v6.1 (Resolution Pass)
 steps:
   - name: 'python:3.11-slim'
     id: 'deploy-to-agent-engine'
@@ -14,8 +14,7 @@ steps:
         echo "==> Step 2: Consolidated Project Dependency Installation"
         python3 -m pip install -q --no-cache-dir \
           "packaging==24.2" \
-          "google-cloud-aiplatform[agent_engines,reasoningengine]==1.71.1" \
-          "vertexai[reasoningengine]==1.71.1" \
+          "google-cloud-aiplatform[agent-engines,reasoningengine]==1.71.1" \
           "google-adk[agent-identity,a2a]>=0.5.0" \
           "mcp>=1.0.0" \
           "google-cloud-bigquery>=3.0.0" \
@@ -28,9 +27,9 @@ steps:
           "opentelemetry-exporter-gcp-monitoring>=1.5.0,<2.0.0"
 
         echo "==> Step 3: Verification"
-        python3 -c "import packaging; print('packaging:', packaging.__version__)"
-        python3 -c "import vertexai; print('vertexai: OK')"
-        python3 -c "import opentelemetry.exporter.gcp.trace; print('OTel Trace Exporter: OK')"
+        python3 -c "import packaging; print('packaging:', packaging.__version__)" \
+          && python3 -c "import google.cloud.aiplatform; print('aiplatform: OK')" \
+          && python3 -c "import opentelemetry.exporter.gcp.trace; print('OTel Trace Exporter: OK')"
 
         echo "==> Step 4: Running deploy.py"
         python3 deploy.py

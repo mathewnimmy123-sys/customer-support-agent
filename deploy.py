@@ -1,7 +1,7 @@
-# deploy.py — v6.0
+# deploy.py — v6.1
 import os
 import logging
-import vertexai
+from google.cloud import aiplatform
 from vertexai.preview import reasoning_engines
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -11,10 +11,10 @@ PROJECT_ID     = "gci-techss-gcp-pjnp-01nl165115"
 LOCATION       = "us-central1"
 STAGING_BUCKET = "gs://gci-techss-gcp-pjnp-01nl165115-adk-staging"
 
+# Streamlined requirement block ensuring the engine cluster doesn't throw resolution locks
 REQUIREMENTS = [
     "packaging==24.2",
-    "google-cloud-aiplatform[agent_engines,reasoningengine]==1.71.1",
-    "vertexai[reasoningengine]==1.71.1",
+    "google-cloud-aiplatform[agent-engines,reasoningengine]==1.71.1",
     "google-adk[agent-identity,a2a]>=0.5.0",
     "mcp>=1.0.0",
     "google-cloud-bigquery>=3.0.0",
@@ -27,7 +27,7 @@ REQUIREMENTS = [
 ]
 
 log.info("Initialising Vertex AI project=%s location=%s", PROJECT_ID, LOCATION)
-vertexai.init(project=PROJECT_ID, location=LOCATION, staging_bucket=STAGING_BUCKET)
+aiplatform.init(project=PROJECT_ID, location=LOCATION, staging_bucket=STAGING_BUCKET)
 
 log.info("Registering Customer Support Agent package directory directly...")
 remote = reasoning_engines.ReasoningEngine.create(
