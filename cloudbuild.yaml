@@ -1,4 +1,4 @@
-# cloudbuild.yaml — v8.0 (The Safe Demo Line)
+# cloudbuild.yaml
 steps:
   - name: 'python:3.11-slim'
     id: 'deploy-to-agent-engine'
@@ -11,18 +11,12 @@ steps:
         echo "==> Step 1: Upgrade base installer tools"
         python3 -m pip install -q --no-cache-dir --upgrade pip setuptools wheel
 
-        echo "==> Step 2: Consolidated Project Dependency Installation"
+        echo "==> Step 2: Install baseline deploy dependencies"
         python3 -m pip install -q --no-cache-dir \
           "packaging==24.2" \
-          "google-cloud-aiplatform[reasoningengine]==1.71.1" \
-          "google-cloud-bigquery>=3.0.0" \
-          "pydantic>=2.10.0,<3.0.0"
+          "google-cloud-aiplatform[reasoningengine]==1.71.1"
 
-        echo "==> Step 3: Verification"
-        python3 -c "import packaging; print('packaging:', packaging.__version__)"
-        python3 -c "import google.cloud.aiplatform; print('aiplatform: OK')"
-
-        echo "==> Step 4: Running deploy.py"
+        echo "==> Step 3: Running deploy.py"
         python3 deploy.py
 
 timeout: '1200s'
