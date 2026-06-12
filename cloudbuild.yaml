@@ -1,4 +1,4 @@
-# cloudbuild.yaml — v6.2 (The Final Lap)
+# cloudbuild.yaml — v8.0 (The Safe Demo Line)
 steps:
   - name: 'python:3.11-slim'
     id: 'deploy-to-agent-engine'
@@ -14,22 +14,13 @@ steps:
         echo "==> Step 2: Consolidated Project Dependency Installation"
         python3 -m pip install -q --no-cache-dir \
           "packaging==24.2" \
-          "google-cloud-aiplatform[agent-engines,reasoningengine]==1.71.1" \
-          "google-adk[agent-identity,a2a]>=0.5.0" \
-          "mcp>=1.0.0" \
+          "google-cloud-aiplatform[reasoningengine]==1.71.1" \
           "google-cloud-bigquery>=3.0.0" \
-          "google-auth>=2.0.0" \
-          "aiohttp>=3.10.0,<3.11.0" \
-          "pydantic>=2.10.0,<3.0.0" \
-          "opentelemetry-api>=1.25.0,<2.0.0" \
-          "opentelemetry-sdk>=1.25.0,<2.0.0" \
-          "opentelemetry-exporter-gcp-trace>=1.5.0,<2.0.0" \
-          "opentelemetry-exporter-gcp-monitoring>=1.5.0,<2.0.0"
+          "pydantic>=2.10.0,<3.0.0"
 
         echo "==> Step 3: Verification"
         python3 -c "import packaging; print('packaging:', packaging.__version__)"
         python3 -c "import google.cloud.aiplatform; print('aiplatform: OK')"
-        python3 -c "import opentelemetry.trace; print('OpenTelemetry Core: OK')"
 
         echo "==> Step 4: Running deploy.py"
         python3 deploy.py
