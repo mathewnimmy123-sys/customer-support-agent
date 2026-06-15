@@ -17,8 +17,8 @@ def run_agent(text_query: str, session_id: str = "default-session") -> str:
     print(f"[Agent Execution] Session {session_id} executing query: '{text_query}'")
     
     try:
-        # FIX: Explicitly target the stable production version string for SDK 1.44 compatibility
-        model = GenerativeModel("gemini-1.5-flash-001")
+        # FIX: Explicitly target the Gemini 1.0 Pro model supported by SDK v1.44.0
+        model = GenerativeModel("gemini-1.0-pro-001")
         
         # Combine instructions and runtime variables explicitly into the prompt context
         full_prompt = (
