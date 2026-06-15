@@ -17,26 +17,28 @@ def run_agent(text_query: str, session_id: str = "default-session") -> str:
     print(f"[Agent Execution] Session {session_id} executing query: '{text_query}'")
     
     try:
-        # Define the Agent's identity persona instructions
-        system_instruction = (
+        # Initialize the model without extra keyword arguments
+        model = GenerativeModel("gemini-1.5-flash")
+        
+        # Combine instructions and runtime variables explicitly into the prompt context
+        full_prompt = (
+            "SYSTEM INSTRUCTION:\n"
             "You are an advanced Customer Support AI Agent. Assist users politely, "
             "accurately, and concisely. If they ask about order status, acknowledge "
-            "their session tracker context."
+            "their session tracker context.\n\n"
+            f"CONTEXT:\n"
+            f"Session ID: {session_id}\n\n"
+            f"USER QUERY:\n"
+            f"{text_query}"
         )
         
-        # FIX: Pass system_instruction here during Model Initialization
-        model = GenerativeModel(
-            "gemini-1.5-flash",
-            system_instruction=system_instruction
-        )
-        
-        # Generate the live completion response cleanly
+        # Generate completion response safely
         response = model.generate_content(
-            f"Context Session: {session_id}\nUser Query: {text_query}",
+            full_prompt,
             generation_config={"temperature": 0.2}
         )
         
-        # Extract and return the final text
+        # Extract and return the final text response
         if response.text:
             return response.text.strip()
         else:
