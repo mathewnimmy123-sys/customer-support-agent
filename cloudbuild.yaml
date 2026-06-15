@@ -1,54 +1,35 @@
-# cloudbuild.yaml
 steps:
-<<<<<<< HEAD
-  # STEP 1: Build the local workspace into an immutable Docker image
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build-agent-container-image'
-    args: [
-      'build', 
-      '-t', 'us-west1-docker.pkg.dev/$PROJECT_ID/agent-repository/customer-support-agent:$COMMIT_SHA', 
-      '.'
-    ]
+    args:
+      - 'build'
+      - '-t'
+      - 'us-west1-docker.pkg.dev/gci-techss-gcp-pjnp-01nl165115/agent-repository/customer-support-agent:latest'
+      - '.'
 
-  # STEP 2: Push the compiled image into the Artifact Registry (as shown in your diagram)
   - name: 'gcr.io/cloud-builders/docker'
-    id: 'push-image-to-artifact-registry'
-    args: [
-      'push', 
-      'us-west1-docker.pkg.dev/$PROJECT_ID/agent-repository/customer-support-agent:$COMMIT_SHA'
-    ]
+    id: 'push-agent-container-image'
+    args:
+      - 'push'
+      - 'us-west1-docker.pkg.dev/gci-techss-gcp-pjnp-01nl165115/agent-repository/customer-support-agent:latest'
 
-  # STEP 3: Deploy the image from Artifact Registry out to a Cloud Run Workload
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: 'deploy-workload-to-cloud-run'
+    id: 'deploy-agent-service'
     entrypoint: 'gcloud'
-    args: [
-      'run', 'deploy', 'customer-support-agent-service',
-      '--image', 'us-west1-docker.pkg.dev/$PROJECT_ID/agent-repository/customer-support-agent:$COMMIT_SHA',
-      '--region', 'us-west1',
-      '--platform', 'managed',
-      '--allow-unauthenticated'
-    ]
+    args:
+      - 'run'
+      - 'deploy'
+      - 'customer-support-agent-service'
+      - '--image'
+      - 'us-west1-docker.pkg.dev/gci-techss-gcp-pjnp-01nl165115/agent-repository/customer-support-agent:latest'
+      - '--region'
+      - 'us-west1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
 
 images:
-  - 'us-west1-docker.pkg.dev/$PROJECT_ID/agent-repository/customer-support-agent:$COMMIT_SHA'
-=======
-  - name: 'python:3.11-slim'
-    id: 'live-agent-engine-deployment'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        echo "==> Step 1: Upgrading deployment environment dependencies"
-        python3 -m pip install -q --no-cache-dir --upgrade pip setuptools wheel
-        python3 -m pip install -q --no-cache-dir \
-          "packaging==24.2" \
-          "google-cloud-aiplatform[reasoningengine]==1.71.1"
-
-        echo "==> Step 2: Running deploy.py to trigger live Vertex resource creation"
-        python3 deploy.py
->>>>>>> 2616edf286dd2289307638b8f52d8462f431fc03
+  - 'us-west1-docker.pkg.dev/gci-techss-gcp-pjnp-01nl165115/agent-repository/customer-support-agent:latest'
 
 options:
   logging: CLOUD_LOGGING_ONLY
