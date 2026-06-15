@@ -2,7 +2,7 @@ import os
 from google.cloud import aiplatform
 from vertexai.generative_models import GenerativeModel
 
-# 1. Initialize Vertex AI safely using environment variables or defaults
+# Initialize Vertex AI safely
 PROJECT_ID = os.environ.get("GCP_PROJECT", "gci-techss-gcp-pjnp-01nl165115")
 LOCATION = os.environ.get("GCP_LOCATION", "us-west1")
 
@@ -17,25 +17,26 @@ def run_agent(text_query: str, session_id: str = "default-session") -> str:
     print(f"[Agent Execution] Session {session_id} executing query: '{text_query}'")
     
     try:
-        # 2. Define the core processing model
-        # Using gemini-1.5-flash as a fast, production standard for agent tasks
-        model = GenerativeModel("gemini-1.5-flash")
-        
-        # 3. Define the Agent's identity persona instructions
+        # Define the Agent's identity persona instructions
         system_instruction = (
             "You are an advanced Customer Support AI Agent. Assist users politely, "
             "accurately, and concisely. If they ask about order status, acknowledge "
             "their session tracker context."
         )
         
-        # 4. Generate the live completion response
-        response = model.generate_content(
-            f"Context Session: {session_id}\nUser Query: {text_query}",
-            generation_config={"temperature": 0.2},
+        # FIX: Pass system_instruction here during Model Initialization
+        model = GenerativeModel(
+            "gemini-1.5-flash",
             system_instruction=system_instruction
         )
         
-        # 5. Extract and return the final text
+        # Generate the live completion response cleanly
+        response = model.generate_content(
+            f"Context Session: {session_id}\nUser Query: {text_query}",
+            generation_config={"temperature": 0.2}
+        )
+        
+        # Extract and return the final text
         if response.text:
             return response.text.strip()
         else:
@@ -43,5 +44,4 @@ def run_agent(text_query: str, session_id: str = "default-session") -> str:
             
     except Exception as e:
         print(f"[Agent Execution Error] Failed to generate agent content: {str(e)}")
-        # Pass the exact breakdown up to main.py's robust error logger
         raise e
