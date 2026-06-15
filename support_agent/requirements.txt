@@ -3,3 +3,7 @@ google-auth>=2.0.0
 mcp>=1.0.0
 google-adk
 google-cloud-bigquery
+# Pin these to break the infinite resolution loop
+packaging==24.2
+google-cloud-aiplatform[agent_engines]==1.157.0
+vertexai==1.71.1

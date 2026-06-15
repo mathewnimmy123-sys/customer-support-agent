@@ -1,5 +1,6 @@
 # cloudbuild.yaml
 steps:
+<<<<<<< HEAD
   # STEP 1: Build the local workspace into an immutable Docker image
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build-agent-container-image'
@@ -31,6 +32,23 @@ steps:
 
 images:
   - 'us-west1-docker.pkg.dev/$PROJECT_ID/agent-repository/customer-support-agent:$COMMIT_SHA'
+=======
+  - name: 'python:3.11-slim'
+    id: 'live-agent-engine-deployment'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "==> Step 1: Upgrading deployment environment dependencies"
+        python3 -m pip install -q --no-cache-dir --upgrade pip setuptools wheel
+        python3 -m pip install -q --no-cache-dir \
+          "packaging==24.2" \
+          "google-cloud-aiplatform[reasoningengine]==1.71.1"
+
+        echo "==> Step 2: Running deploy.py to trigger live Vertex resource creation"
+        python3 deploy.py
+>>>>>>> 2616edf286dd2289307638b8f52d8462f431fc03
 
 options:
   logging: CLOUD_LOGGING_ONLY
