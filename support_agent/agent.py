@@ -1,68 +1,47 @@
-<<<<<<< HEAD
-# support_agent/agent.py
 import os
-import logging
-from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from google.cloud import aiplatform
+from vertexai.generative_models import GenerativeModel
 
-try:
-    from google.cloud.opentelemetry_instrumentation.cloud_trace import CloudTraceSpanExporter
-    _cloud_trace_available = True
-except ImportError:
-    _cloud_trace_available = False
+# 1. Initialize Vertex AI safely using environment variables or defaults
+PROJECT_ID = os.environ.get("GCP_PROJECT", "gci-techss-gcp-pjnp-01nl165115")
+LOCATION = os.environ.get("GCP_LOCATION", "us-west1")
 
-from google.adk.telemetry import setup
+print(f"[Agent Init] Connecting to Vertex AI (Project: {PROJECT_ID}, Region: {LOCATION})...")
+aiplatform.init(project=PROJECT_ID, location=LOCATION)
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-PROJECT_ID = "gci-techss-gcp-pjnp-01nl165115"
-LOCATION   = "us-central1"
-
-def _configure_telemetry() -> None:
-    provider = TracerProvider()
-    if _cloud_trace_available:
-        exporter = CloudTraceSpanExporter(project_id=PROJECT_ID)
-        provider.add_span_processor(BatchSpanProcessor(exporter))
-        logger.info("OpenTelemetry → Cloud Trace exporter registered.")
-    else:
-        logger.warning("google-cloud-opentelemetry not installed; spans will NOT be exported to Cloud Trace.")
-
-    trace.set_tracer_provider(provider)
+def run_agent(text_query: str, session_id: str = "default-session") -> str:
+    """
+    Main orchestrator endpoint matching your FastAPI runtime wrapper.
+    Processes the incoming text query and returns the agent's response.
+    """
+    print(f"[Agent Execution] Session {session_id} executing query: '{text_query}'")
+    
     try:
-        setup.setup_telemetry()
-        logger.info("ADK telemetry setup complete.")
-    except Exception as exc:
-        logger.warning("ADK telemetry setup raised: %s", exc)
-
-_configure_telemetry()
-
-from .supervisor import customer_support_supervisor
-agent = customer_support_supervisor
-=======
-# support_agent/agent.py — v8.0 (Telemetry Deferred Pass)
-import os
-import logging
-from typing import Dict, Any
-
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
-logger = logging.getLogger("customer_support_agent")
-
-# support_agent/agent.py
-# support_agent/agent.py
-
-class SimpleSupportAgent:
-    def __init__(self): 
-        pass
+        # 2. Define the core processing model
+        # Using gemini-1.5-flash as a fast, production standard for agent tasks
+        model = GenerativeModel("gemini-1.5-flash")
         
-    def set_up(self): 
-        pass
+        # 3. Define the Agent's identity persona instructions
+        system_instruction = (
+            "You are an advanced Customer Support AI Agent. Assist users politely, "
+            "accurately, and concisely. If they ask about order status, acknowledge "
+            "their session tracker context."
+        )
         
-    def query(self, input_data, **kwargs):
-        user_msg = input_data.get("input", "Hello")
-        return {"content": f"Customer Support Agent Live. Processing input: {user_msg}"}
-
-# Create the instance object that deploy.py imports
-agent = SimpleSupportAgent()
->>>>>>> 2616edf286dd2289307638b8f52d8462f431fc03
+        # 4. Generate the live completion response
+        response = model.generate_content(
+            f"Context Session: {session_id}\nUser Query: {text_query}",
+            generation_config={"temperature": 0.2},
+            system_instruction=system_instruction
+        )
+        
+        # 5. Extract and return the final text
+        if response.text:
+            return response.text.strip()
+        else:
+            return "Agent executed successfully but returned an empty response."
+            
+    except Exception as e:
+        print(f"[Agent Execution Error] Failed to generate agent content: {str(e)}")
+        # Pass the exact breakdown up to main.py's robust error logger
+        raise e
