@@ -10,7 +10,6 @@ class ChatRequest(BaseModel):
     text: str
     session_id: str = "default-session"
 
-# --- 1. NEW: Beautiful Web Interface for Browser Visitors ---
 @app.get("/", response_class=HTMLResponse)
 async def serve_web_interface():
     return """
@@ -37,7 +36,7 @@ async def serve_web_interface():
     </head>
     <body>
         <div class="chat-container">
-            <div class="chat-header">?? Customer Support Agent Portal</div>
+            <div class="chat-header">[AI Support] Customer Agent Portal</div>
             <div class="chat-box" id="chatBox">
                 <div class="message agent">Hello! I am your AI assistant powered by Gemini 2.5. How can I help you with your order today?</div>
             </div>
@@ -48,16 +47,17 @@ async def serve_web_interface():
         </div>
 
         <script>
-            async def sendMessage() {
+            // FIX: Replaced 'async def' with correct native JS syntax 'async function'
+            async function sendMessage() {
                 const inputElement = document.getElementById('userInput');
                 const text = inputElement.value.trim();
                 if (!text) return;
 
-                // Append user message
+                // Append user message to viewport
                 appendMessage(text, 'user');
                 inputElement.value = '';
 
-                // Create loader message
+                // Create placeholder status element
                 const loaderId = appendMessage("Thinking...", 'agent');
 
                 try {
@@ -68,7 +68,7 @@ async def serve_web_interface():
                     });
                     const data = await response.json();
                     
-                    // Replace loader text with real agent answer
+                    // Route response string safely into place
                     document.getElementById(loaderId).innerText = data.response;
                 } catch (error) {
                     document.getElementById(loaderId).innerText = "Error contacting agent service.";
@@ -95,7 +95,6 @@ async def serve_web_interface():
     </html>
     """
 
-# --- 2. Existing Chat API Endpoint ---
 @app.post("/chat")
 async def chat_with_agent(query: ChatRequest):
     try:
