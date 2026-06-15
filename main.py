@@ -2,8 +2,6 @@ import os
 import uvicorn
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-# Dynamic import connecting your API layer to your agent logic folder
-from support_agent.agent import run_agent
 
 app = FastAPI(
     title="Vertex AI Customer Support Agent Service",
@@ -30,11 +28,21 @@ def health_check():
 @app.post("/chat")
 async def chat_with_agent(query: AgentQuery):
     try:
-        # Pass the incoming payload directly into your internal agent orchestrator
+        # Move import here to prevent container startup crashes.
+        # This allows the app to start and let us debug the internal code safely.
+        print("?? Attempting to import and execute Agent logic...")
+        from support_agent.agent import run_agent
+        
         response = run_agent(query.text, query.session_id)
         return {"response": response}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        import traceback
+        error_details = traceback.format_exc()
+        print(f"? CRITICAL AGENT ERROR:\n{error_details}")
+        raise HTTPException(
+            status_code=500, 
+            detail={"message": str(e), "traceback": error_details}
+        )
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
