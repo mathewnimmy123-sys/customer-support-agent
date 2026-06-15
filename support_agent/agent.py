@@ -2,11 +2,11 @@ import os
 from google.cloud import aiplatform
 from vertexai.generative_models import GenerativeModel
 
-# Initialize Vertex AI safely
+# Initialize Vertex AI
 PROJECT_ID = os.environ.get("GCP_PROJECT", "gci-techss-gcp-pjnp-01nl165115")
-LOCATION = os.environ.get("GCP_LOCATION", "us-west1")
+LOCATION = "us-central1"
 
-print(f"[Agent Init] Connecting to Vertex AI (Project: {PROJECT_ID}, Region: {LOCATION})...")
+print(f"[Agent Init] Connecting to Agent Platform Hub (Project: {PROJECT_ID}, Region: {LOCATION})...")
 aiplatform.init(project=PROJECT_ID, location=LOCATION)
 
 def run_agent(text_query: str, session_id: str = "default-session") -> str:
@@ -17,8 +17,8 @@ def run_agent(text_query: str, session_id: str = "default-session") -> str:
     print(f"[Agent Execution] Session {session_id} executing query: '{text_query}'")
     
     try:
-        # FIX: Explicitly target the Gemini 1.0 Pro model supported by SDK v1.44.0
-        model = GenerativeModel("gemini-1.0-pro-001")
+        # UPDATE: Point directly to the current Gemini 2.5 Flash architecture model
+        model = GenerativeModel("gemini-2.5-flash")
         
         # Combine instructions and runtime variables explicitly into the prompt context
         full_prompt = (
