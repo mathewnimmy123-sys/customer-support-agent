@@ -104,8 +104,8 @@ async def chat_with_agent(query: ChatRequest):
         raise HTTPException(status_code=500, detail={"message": str(e)})
 
 if __name__ == "__main__":
-    # Cloud Run injects the PORT environment variable dynamically
+    # Cloud Run automatically injects the PORT environment variable (defaulting to 8080)
     port = int(os.environ.get("PORT", 8080))
     
-    # Ensure it binds to 0.0.0.0 so external health checks can reach it
+    # CRITICAL: host must be '0.0.0.0' so the container listens externally
     app.run(host="0.0.0.0", port=port)
