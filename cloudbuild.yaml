@@ -25,10 +25,10 @@ steps:
       - 'releases'
       - 'create'
       - 'release-${SHORT_SHA}'
-      - '--delivery-pipeline=customer-support-pipeline'
+      - '--delivery-pipeline=customer-support-agent-pipeline' # UPDATED to match your GCP Interface name
       - '--region=us-west1'
       - '--images=customer-support-agent=us-west1-docker.pkg.dev/gci-techss-gcp-pjnp-01nl165115/agent-repository/customer-support-agent:latest'
 
-# CRITICAL FIX: Directs logs to Cloud Logging to bypass the missing bucket error
+# Enterprise Configuration for Worker Service Accounts
 options:
   logging: CLOUD_LOGGING_ONLY
