@@ -104,5 +104,8 @@ async def chat_with_agent(query: ChatRequest):
         raise HTTPException(status_code=500, detail={"message": str(e)})
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+    # Cloud Run injects the PORT environment variable dynamically
+    port = int(os.environ.get("PORT", 8080))
+    
+    # Ensure it binds to 0.0.0.0 so external health checks can reach it
+    app.run(host="0.0.0.0", port=port)

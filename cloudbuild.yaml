@@ -1,35 +1,20 @@
 steps:
+  # Step 0: Build the container image
   - name: 'gcr.io/cloud-builders/docker'
-    id: 'build-agent-container-image'
-    args:
-      - 'build'
-      - '-t'
-      - 'us-west1-docker.pkg.dev/gci-techss-gcp-pjnp-01nl165115/agent-repository/customer-support-agent:latest'
-      - '.'
+    args: ['build', '-t', 'us-west1-docker.pkg.dev/gci-techss-gcp-pjnp-01nl165115/agent-repository/customer-support-agent:latest', '.']
 
+  # Step 1: Push the container image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
-    id: 'push-agent-container-image'
-    args:
-      - 'push'
-      - 'us-west1-docker.pkg.dev/gci-techss-gcp-pjnp-01nl165115/agent-repository/customer-support-agent:latest'
+    args: ['push', 'us-west1-docker.pkg.dev/gci-techss-gcp-pjnp-01nl165115/agent-repository/customer-support-agent:latest']
 
+  # Step 2: Hand off to Google Cloud Deploy (Matches your Architecture Chart!)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: 'deploy-agent-service'
     entrypoint: 'gcloud'
     args:
-      - 'run'
       - 'deploy'
-      - 'customer-support-agent-service'
-      - '--image'
-      - 'us-west1-docker.pkg.dev/gci-techss-gcp-pjnp-01nl165115/agent-repository/customer-support-agent:latest'
-      - '--region'
-      - 'us-west1'
-      - '--platform'
-      - 'managed'
-      - '--allow-unauthenticated'
-
-images:
-  - 'us-west1-docker.pkg.dev/gci-techss-gcp-pjnp-01nl165115/agent-repository/customer-support-agent:latest'
-
-options:
-  logging: CLOUD_LOGGING_ONLY
+      - 'releases'
+      - 'create'
+      - 'release-${SHORT_SHA}'
+      - '--delivery-pipeline=customer-support-pipeline' # Make sure this matches your pipeline name
+      - '--region=us-west1'
+      - '--images=customer-support-agent=us-west1-docker.pkg.dev/gci-techss-gcp-pjnp-01nl165115/agent-repository/customer-support-agent:latest'
