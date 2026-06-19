@@ -1,0 +1,16 @@
+apiVersion: deploy.cloud.google.com/v1
+kind: DeliveryPipeline
+metadata:
+  name: customer-support-agent-pipeline
+description: Production delivery pipeline for AI Customer Support Agent
+serialPipeline:
+  stages:
+  - targetId: prod-cloudrun
+---
+apiVersion: deploy.cloud.google.com/v1
+kind: Target
+metadata:
+  name: prod-cloudrun
+description: Production Cloud Run Target
+run:
+  location: projects/gci-techss-gcp-pjnp-01nl165115/locations/us-west1
