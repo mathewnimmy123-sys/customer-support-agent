@@ -1,20 +1,34 @@
 steps:
-  # Step 0: Build the container image
+  # Step 1: Build the container image using Docker
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'us-west1-docker.pkg.dev/gci-techss-gcp-pjnp-01nl165115/agent-repository/customer-support-agent:latest', '.']
+    id: 'build-agent-container-image'
+    args: [
+      'build', 
+      '-t', 'us-west1-docker.pkg.dev/gci-techss-gcp-pjnp-01nl165115/agent-repository/customer-support-agent:latest', 
+      '.'
+    ]
 
-  # Step 1: Push the container image to Artifact Registry
+  # Step 2: Push the container image to Google Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'us-west1-docker.pkg.dev/gci-techss-gcp-pjnp-01nl165115/agent-repository/customer-support-agent:latest']
+    id: 'push-agent-container-image'
+    args: [
+      'push', 
+      'us-west1-docker.pkg.dev/gci-techss-gcp-pjnp-01nl165115/agent-repository/customer-support-agent:latest'
+    ]
 
-  # Step 2: Hand off to Google Cloud Deploy (Matches your Architecture Chart!)
+  # Step 3: Trigger the Google Cloud Deploy release pipeline
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-agent-service'
     entrypoint: 'gcloud'
     args:
       - 'deploy'
       - 'releases'
       - 'create'
       - 'release-${SHORT_SHA}'
-      - '--delivery-pipeline=customer-support-pipeline' # Make sure this matches your pipeline name
+      - '--delivery-pipeline=customer-support-pipeline'
       - '--region=us-west1'
       - '--images=customer-support-agent=us-west1-docker.pkg.dev/gci-techss-gcp-pjnp-01nl165115/agent-repository/customer-support-agent:latest'
+
+# CRITICAL FIX: Directs logs to Cloud Logging to bypass the missing bucket error
+options:
+  logging: CLOUD_LOGGING_ONLY
